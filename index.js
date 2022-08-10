@@ -2,9 +2,22 @@ import React from 'react'
 import Image from 'next/image'
 import {HomeIcon, HashtagIcon, BellIcon, InboxIcon, BookmarkIcon, ClipboardIcon, UserIcon, DotsCircleHorizontalIcon, DotsHorizontalIcon, SparklesIcon, PhotographIcon, EmojiHappyIcon, ChatIcon, TrashIcon, ChartBarIcon, HeartIcon, ShareIcon, SearchIcon} from '@heroicons/react/solid'
 import { Button, Input } from 'antd'
+import { useForm } from "react-hook-form";
+import {useRef, useState } from 'react';
 
+export default function jc({newsposts,random}){
 
-export default function jc({newsposts}){
+  const { register, handleSubmit } = useForm();
+  const onSubmit = async function(data){
+  const response = await fetch("api/hello", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({data})
+    })
+    const resdata = await response.json();
+    console.log(resdata);
+  }
+
 
   var jack ="heres jc"
   const posts = [
@@ -43,10 +56,15 @@ Feed
 </div>
 
 
-
 <div className="flex">
 <img className="h-12" src="https://media-exp1.licdn.com/dms/image/C4E03AQGoNCrICm4C0Q/profile-displayphoto-shrink_800_800/0/1516782457537?e=1661990400&v=beta&t=bBoOtZ6keEgtP_7ZfEhiOOPOPAWl3GeZwBYDLhXosD8"></img>
-  <Input className="xl:min-w-[576px] w-full border-none focus:ring-0"/>
+
+<form onSubmit={handleSubmit(onSubmit)}>
+
+<input type="text" name="name" className="xl:min-w-[576px] w-full border-none focus:ring-0" {...register("name")}/>
+
+</form>  
+
   
 </div>
 
@@ -56,9 +74,11 @@ Feed
     <EmojiHappyIcon className="h-10 w-10 p-2 text-sky-500"/>
   </div>
  
-<button className="bg-blue-400 text-white rounded-full w-36 h-10 font-bold shadow-md hover:brightness-95 text-lg hidden xl:inline">Tweet</button>
+<button onClick={handleSubmit(onSubmit)} className="bg-blue-400 text-white rounded-full w-36 h-10 font-bold shadow-md hover:brightness-95 text-lg hidden xl:inline">Tweet</button>
 
 </div>
+
+
 
 <div className="w-60 cursor-pointer">
 
@@ -97,12 +117,34 @@ Feed
 <div>
       <div className="flex float-right rounded-full items-center border-2 p-3">
         <SearchIcon className="h-10"/>
-        <input className="border-none focus:ring-0" type="text"></input>
-      
+       <form>
+        <input className="border-none focus:ring-0" type="text"     
+        ></input>
+      </form>
+
       </div>
-      <div className="float-right display:inline-block absolute right-0 w-[420px]">
+      <div className="float-right display:inline-block absolute right-0 w-[420px] top-20">
       {
-      newsposts.map(function(item){
+      random.results.slice(0,8).map(function(item){
+   
+      return <div className="">
+       <img className="" src={item.picture.thumbnail}></img>
+        </div>
+  
+       })
+  
+         }
+
+       
+      <button className="bg-gray-200 w-80 h-10 font-bold">Show more</button>
+
+      </div>
+      
+
+      
+      <div className="float-right display:inline-block absolute right-0 w-[350px] top-20">
+      {
+      newsposts.slice(0,10).map(function(item){
    
       return <div className="">
        {item.title}
@@ -119,7 +161,7 @@ Feed
 
 
 
-<div className="hoverEffect w-56 flex">
+<div className="hoverEffect w-56 flex fixed top-0">
 
   <Image width="45" height="45" src="https://help.twitter.com/content/dam/help-twitter/brand/logo.png">
 
@@ -203,9 +245,13 @@ const newsResults = await fetch('https://jsonplaceholder.typicode.com/posts');
 
 const newsposts = await newsResults.json();
 
+const randomUsersResults = await fetch('https://randomuser.me/api/?results=30&inc=name,login,picture');
+const random = await randomUsersResults.json();
+
 return {
   props : {
     newsposts,
+    random,
   }
 
 }
