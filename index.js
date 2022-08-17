@@ -5,17 +5,19 @@ import { Button, Input } from 'antd'
 import { useForm } from "react-hook-form";
 import {useRef, useState } from 'react';
 
+
 export default function jc({newsposts,random}){
 
   const { register, handleSubmit } = useForm();
   const onSubmit = async function(data){
-  const response = await fetch("api/hello", {
+  const response = await fetch("./api/mongapi", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({data})
     })
     const resdata = await response.json();
-    console.log(resdata);
+  //  console.log(resdata);
+  //  return resdata;
   }
 
 
@@ -248,6 +250,7 @@ const newsposts = await newsResults.json();
 const randomUsersResults = await fetch('https://randomuser.me/api/?results=30&inc=name,login,picture');
 const random = await randomUsersResults.json();
 
+
 return {
   props : {
     newsposts,
@@ -257,3 +260,5 @@ return {
 }
 
 }
+
+
